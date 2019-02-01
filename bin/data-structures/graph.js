@@ -104,7 +104,7 @@ class Graph{
         const queue = new Queue();
         const inDegreeMap = {};
         for(const [key, value] of Object.entries(this.dict)){
-            inDegreeMap[key] = this.getInDegree(key.data);
+            inDegreeMap[key] = this.getInDegree(key);
             if (inDegreeMap[key] === 0){
                 queue.offer(value);
             }
@@ -112,17 +112,21 @@ class Graph{
         const result = [];
         while(!queue.isEmpty()){
             let curr = queue.poll();
+            result.push(curr);
             curr.adjacencySet.forEach((item)=>{
-                inDegreeMap[item.key] = inDegreeMap[item.key] -1;
-                if (inDegreeMap[item.key] === 0){
+                inDegreeMap[item.data] = inDegreeMap[item.data] -1;
+                if (inDegreeMap[item.data] === 0){
                     queue.offer(item);
                 }
 
             })
         }
         if(result.length !== this.numVertices){
-            console.log("This graph has cycles.")
+            throw TypeError("This graph has cycles.")
         }
+        result.map(item=>{
+            console.log(item.data);
+        });
 
     }
 }
@@ -137,12 +141,14 @@ class Node{
     }
 }
 
-graph = new Graph();
+graph = new Graph(directed=true);
 graph.addEdge(12, 13);
 graph.addEdge(12, 14);
 graph.addEdge(13, 15);
 graph.addEdge(14, 6);
-graph.stringify();
-console.log(graph.getInDegree(12));
-graph.breadthFirstTraversal(12);
-graph.depthFirstTraversal(12);
+// graph.addEdge(6, 12);
+// graph.stringify();
+// console.log(graph.getInDegree(13));
+// graph.breadthFirstTraversal(12);
+// graph.depthFirstTraversal(12);
+graph.topologicalSort();
